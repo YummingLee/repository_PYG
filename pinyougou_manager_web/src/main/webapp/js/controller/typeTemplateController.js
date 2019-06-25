@@ -1,5 +1,5 @@
  //控制层 
-app.controller('typeTemplateController' ,function($scope,$controller ,typeTemplateService,brandService){
+app.controller('typeTemplateController' ,function($scope,$controller ,typeTemplateService,brandService,specificationService){
 	
 	$controller('baseController',{$scope:$scope});//继承
 
@@ -16,6 +16,15 @@ app.controller('typeTemplateController' ,function($scope,$controller ,typeTempla
 		brandService.selectOptionList().success(
 			function (response) {
 				$scope.brandList={data:response};
+			}
+		)
+	}
+
+	$scope.specList={data:[]};
+	$scope.findSpecificationList=function(){
+		specificationService.selectOptionList().success(
+			function (response) {
+				$scope.specList={data:response};
 			}
 		)
 	}
