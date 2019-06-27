@@ -5,11 +5,11 @@ app.controller('typeTemplateController' ,function($scope,$controller ,typeTempla
 
 	$scope.deleTableRow=function(index){
 		$scope.entity.customAttributeItems.splice(index,1);
-	}
+	};
 
 	$scope.addTableRow=function(){
-		$scope.entity.customAttributeItems.push();
-	}
+		$scope.entity.customAttributeItems.push({});
+	};
 
 	$scope.brandList={data:[]};
 	$scope.findBrandList=function(){

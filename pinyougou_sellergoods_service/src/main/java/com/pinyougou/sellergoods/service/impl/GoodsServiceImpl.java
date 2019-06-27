@@ -11,6 +11,7 @@ import com.pinyougou.pojo.TbGoodsExample.Criteria;
 import com.pinyougou.sellergoods.service.GoodsService;
 
 import entity.PageResult;
+import org.springframework.util.StringUtils;
 
 /**
  * 服务实现层
@@ -39,6 +40,7 @@ public class GoodsServiceImpl implements GoodsService {
 		PageHelper.startPage(pageNum, pageSize);		
 		Page<TbGoods> page=   (Page<TbGoods>) goodsMapper.selectByExample(null);
 		return new PageResult(page.getTotal(), page.getResult());
+
 	}
 
 	/**
