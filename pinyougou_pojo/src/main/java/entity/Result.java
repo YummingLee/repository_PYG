@@ -16,6 +16,9 @@ public class Result implements Serializable {
 
     }
 
+    public Result() {
+    }
+
     public String getMessage() {
         return message;
     }

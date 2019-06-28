@@ -141,7 +141,13 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
-  <update id="updateByExampleSelective" parameterType="map" >
+    <select id="typeOptions" resultType="java.util.Map">
+      select id,name as text  from tb_type_template
+    </select>
+    <select id="selectChildNum" resultType="java.lang.Integer">
+      SELECT COUNT(*) FROM tb_item_cat WHERE parent_id = #{id}
+    </select>
+    <update id="updateByExampleSelective" parameterType="map" >
     update tb_item_cat
     <set >
       <if test="record.id != null" >

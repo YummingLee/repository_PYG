@@ -30,4 +30,6 @@ public interface TbTypeTemplateMapper {
 
     int updateByPrimaryKey(TbTypeTemplate record);
 
+    TbTypeTemplate selectTypeOption(Long id);
+
 }

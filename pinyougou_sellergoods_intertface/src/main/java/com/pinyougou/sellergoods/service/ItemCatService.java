@@ -1,8 +1,13 @@
 package com.pinyougou.sellergoods.service;
 import java.util.List;
+import java.util.Map;
+
 import com.pinyougou.pojo.TbItemCat;
 
+import com.pinyougou.pojogroup.ItemCat;
 import entity.PageResult;
+import entity.Result;
+
 /**
  * 服务层接口
  * @author Administrator
@@ -27,13 +32,13 @@ public interface ItemCatService {
 	/**
 	 * 增加
 	*/
-	public void add(TbItemCat itemCat);
+	public void add(ItemCat itemCat);
 	
 	
 	/**
 	 * 修改
 	 */
-	public void update(TbItemCat itemCat);
+	public void update(ItemCat itemCat);
 	
 
 	/**
@@ -41,7 +46,7 @@ public interface ItemCatService {
 	 * @param id
 	 * @return
 	 */
-	public TbItemCat findOne(Long id);
+	public ItemCat findOne(Long id);
 	
 	
 	/**
@@ -57,5 +62,11 @@ public interface ItemCatService {
 	 * @return
 	 */
 	public PageResult findPage(TbItemCat itemCat, int pageNum, int pageSize);
-	
+
+	public List<TbItemCat> findByParentId(Long parentId);
+
+    List<Map> typeOptions();
+
+    //查询是否包含子类
+    Result findChild(Long[] ids);
 }

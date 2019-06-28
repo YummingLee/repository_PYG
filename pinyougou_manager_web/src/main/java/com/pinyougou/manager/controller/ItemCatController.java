@@ -1,8 +1,11 @@
 package com.pinyougou.manager.controller;
 import java.util.List;
+import java.util.Map;
 
+import com.pinyougou.pojogroup.ItemCat;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.pinyougou.pojo.TbItemCat;
@@ -47,7 +50,7 @@ public class ItemCatController {
 	 * @return
 	 */
 	@RequestMapping("/add")
-	public Result add(@RequestBody TbItemCat itemCat){
+	public Result add(@RequestBody ItemCat itemCat){
 		try {
 			itemCatService.add(itemCat);
 			return new Result(true, "增加成功");
@@ -63,7 +66,7 @@ public class ItemCatController {
 	 * @return
 	 */
 	@RequestMapping("/update")
-	public Result update(@RequestBody TbItemCat itemCat){
+	public Result update(@RequestBody ItemCat itemCat){
 		try {
 			itemCatService.update(itemCat);
 			return new Result(true, "修改成功");
@@ -79,7 +82,8 @@ public class ItemCatController {
 	 * @return
 	 */
 	@RequestMapping("/findOne")
-	public TbItemCat findOne(Long id){
+	public ItemCat findOne(Long id){
+
 		return itemCatService.findOne(id);		
 	}
 	
@@ -101,7 +105,7 @@ public class ItemCatController {
 	
 		/**
 	 * 查询+分页
-	 * @param brand
+	 * @param itemCat
 	 * @param page
 	 * @param rows
 	 * @return
@@ -109,6 +113,21 @@ public class ItemCatController {
 	@RequestMapping("/search")
 	public PageResult search(@RequestBody TbItemCat itemCat, int page, int rows  ){
 		return itemCatService.findPage(itemCat, page, rows);		
+	}
+
+	@RequestMapping("/findByParentId")
+	public List<TbItemCat> findByParentId(Long parentId){
+		return itemCatService.findByParentId(parentId);
+	}
+
+	@RequestMapping("/typeOptions")
+	public List<Map> typeOptions(){
+		return itemCatService.typeOptions();
+	}
+
+	@RequestMapping("/findChild")
+	public Result findChild(Long[] ids){
+		return itemCatService.findChild(ids);
 	}
 	
 }

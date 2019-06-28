@@ -14,10 +14,12 @@
     <link rel="stylesheet" href="../css/style.css">
 	<script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
     <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
- 
+
+
+
 </head>
 
-<body class="hold-transition skin-red sidebar-mini" >
+<body class="hold-transition skin-red sidebar-mini"  >
   <!-- .box-body -->
                 
                     <div class="box-header with-border">
@@ -74,25 +76,25 @@
 			                          </tr>
 			                      </thead>
 			                      <tbody>
-			                          <tr>
+			                          <tr ng-repeat="entity in list">
 			                              <td><input  type="checkbox"></td>			                              
-				                          <td>1</td>
-									      <td>小米6S手机</td>
-									      <td>1090</td>
-									      <td>数码</td>
-									      <td>手机</td>
-									      <td>国产手机</td>
+				                          <td>{{entity.id}}</td>
+									      <td>{{entity.goodsName}}</td>
+									      <td>{{entity.price}}</td>
+									      <td>{{entity.cateGory1Id}}</td>
+									      <td>{{entity.cateGory2Id}}</td>
+									      <td>{{entity.cateGory3Id}}</td>
 		                                  <td>
-		                                  	<span>
+		                                  	<span ng-if="entity.auditStatus==0">
 		                                  		未申请
 		                                  	</span>
-		                                  	<span >
+		                                  	<span ng-if="entity.auditStatus==1">
 		                                  		申请中
 		                                  	</span>
-		                                  	<span>
+		                                  	<span ng-if="entity.auditStatus==2">
 		                                  		审核通过
 		                                  	</span>
-		                                  	<span>
+		                                  	<span ng-if="entity.auditStatus==3">
 		                                  		已驳回
 		                                  	</span>
 		                                  </td>		                                  

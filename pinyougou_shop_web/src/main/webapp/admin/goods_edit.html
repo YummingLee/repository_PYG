@@ -28,8 +28,8 @@
 	<script type="text/javascript" src="../js/service/uploadService.js"></script>
 	<script type="text/javascript" src="../js/controller/baseController.js"></script>
 	<script type="text/javascript" src="../js/controller/goodsController.js"></script>
-      
-    
+
+
     
 </head>
 
@@ -153,10 +153,10 @@
 					                    <tbody>
 					                      <tr ng-repeat="pojo in entity.goodsDesc.itemImages">					                           
 									            <td>
-									            	{{pojo.color}}
+									            	<!--{{pojo.color}}-->
 									            </td>
 									            <td>
-									           		<img alt="" src="{{pojo.url}}" width="100px" height="100px">	            	 
+									           		<!--<img alt="" src="{{pojo.url}}" width="100px" height="100px">	            	 -->
 									            </td>
 												 <td> <button type="button" class="btn btn-default" title="删除" ng-click="remove_image_entity($index)" ><i class="fa fa-trash-o"></i> 删除</button></td> 
 					                      </tr>
@@ -382,7 +382,7 @@
 					                </button>	
 					            </td>
 								<td>
-									<img  src="{{image_entity.url}}" width="200px" height="200px">
+									<!--<img  src="{{image_entity.url}}" width="200px" height="200px">-->
 								</td>
 							</tr>						
 						</table>

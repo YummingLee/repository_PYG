@@ -1,5 +1,12 @@
 package com.pinyougou.sellergoods.service.impl;
 import java.util.List;
+import java.util.Map;
+
+import com.pinyougou.mapper.TbTypeTemplateMapper;
+import com.pinyougou.pojo.TbTypeTemplate;
+import com.pinyougou.pojo.TbTypeTemplateExample;
+import com.pinyougou.pojogroup.ItemCat;
+import entity.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
@@ -22,6 +29,9 @@ public class ItemCatServiceImpl implements ItemCatService {
 
 	@Autowired
 	private TbItemCatMapper itemCatMapper;
+
+	@Autowired
+	private TbTypeTemplateMapper typeTemplateMapper;
 	
 	/**
 	 * 查询全部
@@ -45,8 +55,15 @@ public class ItemCatServiceImpl implements ItemCatService {
 	 * 增加
 	 */
 	@Override
-	public void add(TbItemCat itemCat) {
-		itemCatMapper.insert(itemCat);		
+	public void add(ItemCat itemCat) {
+		TbItemCat tbItemCat = new TbItemCat();
+		tbItemCat.setId(itemCat.getId());
+		tbItemCat.setParentId(itemCat.getParentId());
+		tbItemCat.setName(itemCat.getName());
+		tbItemCat.setTypeId(itemCat.getTbTypeTemplate().getId());
+		itemCatMapper.insert(tbItemCat);
+
+
 	}
 
 	
@@ -54,8 +71,14 @@ public class ItemCatServiceImpl implements ItemCatService {
 	 * 修改
 	 */
 	@Override
-	public void update(TbItemCat itemCat){
-		itemCatMapper.updateByPrimaryKey(itemCat);
+	public void update(ItemCat itemCat){
+		TbItemCat tbItemCat = new TbItemCat();
+		tbItemCat.setId(itemCat.getId());
+		tbItemCat.setName(itemCat.getName());
+		tbItemCat.setParentId(itemCat.getParentId());
+		tbItemCat.setTypeId(itemCat.getTbTypeTemplate().getId());
+
+		itemCatMapper.updateByPrimaryKey(tbItemCat);
 	}	
 	
 	/**
@@ -64,8 +87,17 @@ public class ItemCatServiceImpl implements ItemCatService {
 	 * @return
 	 */
 	@Override
-	public TbItemCat findOne(Long id){
-		return itemCatMapper.selectByPrimaryKey(id);
+	public ItemCat findOne(Long id){
+
+		TbItemCat tbItemCat = itemCatMapper.selectByPrimaryKey(id);
+		TbTypeTemplate tbTypeTemplate = typeTemplateMapper.selectTypeOption(tbItemCat.getTypeId());
+		ItemCat itemCat = new ItemCat();
+		itemCat.setId(tbItemCat.getId());
+		itemCat.setName(tbItemCat.getName());
+		itemCat.setParentId(tbItemCat.getParentId());
+		itemCat.setTbTypeTemplate(tbTypeTemplate);
+
+		return itemCat;
 	}
 
 	/**
@@ -96,5 +128,41 @@ public class ItemCatServiceImpl implements ItemCatService {
 		Page<TbItemCat> page= (Page<TbItemCat>)itemCatMapper.selectByExample(example);		
 		return new PageResult(page.getTotal(), page.getResult());
 	}
-	
+
+	/**
+	 *
+	 * @param parentId
+	 * @return
+	 */
+	@Override
+	public List<TbItemCat> findByParentId(Long parentId) {
+
+		TbItemCatExample example = new TbItemCatExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andParentIdEqualTo(parentId);
+		return itemCatMapper.selectByExample(example);
+	}
+
+	@Override
+	public List<Map> typeOptions() {
+		return itemCatMapper.typeOptions();
+	}
+
+	@Override
+	public Result findChild(Long[] ids) {
+		Result result = new Result();
+		result.setSuccess(true);
+		int childSum = 0;
+		for (Long id : ids) {
+		    int childNum =	itemCatMapper.selectChildNum(id);
+		    childSum += childNum;
+		}
+		if (childSum != 0){
+			result.setSuccess(false);
+			result.setMessage("所选分类包含子类");
+//			return result;
+		}
+		return result;
+	}
+
 }
