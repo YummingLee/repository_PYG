@@ -2,6 +2,10 @@
 app.controller('goodsController' ,function($scope,$controller   ,goodsService,uploadService){	
 	
 	$controller('baseController',{$scope:$scope});//继承
+
+	// $scope.image_entity={};
+	//
+	// $scope.pojo={};
 	
     //读取列表数据绑定到表单中  
 	$scope.findAll=function(){
@@ -95,19 +99,18 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
 	}
 	
 	//上传图片
-	$scope.uploadFile=function(){
+	$scope.uploadFile=function() {
 		uploadService.uploadFile().success(
-			function(response){
-				if(response.success){
-					$scope.image_entity.url= response.message;
-				}else{
-					alert(response.message);					
+			function (response) {
+				if (response.success) {
+					$scope.image_entity.url = response.message;
+				} else {
+					alert(response.message);
 				}
-			}		
-		);
-		
-		
-	}
+			}).error(function() {
+			alert("上传发生错误");
+		});
+	};
 	
 	$scope.entity={ goodsDesc:{itemImages:[]}  };
 	

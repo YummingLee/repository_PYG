@@ -26,6 +26,11 @@
 	<!-- 引用dubbo 服务 -->
 	<dubbo:application name="pinyougou_shop_web" />
 	<dubbo:registry address="zookeeper://192.168.25.128:2181"/>
-	<dubbo:annotation package="com.pinyougou.shop.controller" />  	
+	<dubbo:annotation package="com.pinyougou.shop.controller" />
+
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8"/>
+		<property name="maxUploadSize" value="5242880"/>
+	</bean>
 
 </beans>
