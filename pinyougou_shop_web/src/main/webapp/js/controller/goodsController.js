@@ -120,7 +120,9 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
 				if(response.success){
 					alert("新增成功");
 					$scope.entity={};
-					editor.html("");//清空富文本编辑器
+					// editor.html("");//清空富文本编辑器
+					location.reload();
+
 				}else{
 					alert(response.message);
 				}
@@ -172,24 +174,46 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
 
 	$scope.updateSpecAttribute=function($event,name,value){
 		var object= $scope.searchObjectByKey(
-			$scope.entity.goodsDesc.specificationItems ,'attributeName', name);
+			$scope.entity.goodsDesc.specificationItems ,'attributeName', name); //遍历集合 查找是否包含value字段 没有返回null
 		if(object!=null){
 			if($event.target.checked ){
-				object.attributeValue.push(value);
+				object.attributeValue.push(value); // 复选框选中 集合中push该值
 			}else{
-				object.attributeValue.splice( object.attributeValue.indexOf(value ) ,1);//移除选
-				项
+				object.attributeValue.splice( object.attributeValue.indexOf(value ) ,1);//移除选项
 
-				if(object.attributeValue.length==0){
+				if(object.attributeValue.length==0){  // 没有值得时候删除这个集合对象
 					$scope.entity.goodsDesc.specificationItems.splice(
 						$scope.entity.goodsDesc.specificationItems.indexOf(object),1);
 				}
 			}
 		}else{
 			$scope.entity.goodsDesc.specificationItems.push(
-				{"attributeName":name,"attributeValue":[value]});
+				{"attributeName":name,"attributeValue":[value]}); //没有找到该字段 直接初始化新的集合
 		}
 	};
+
+
+	$scope.createItemList=function(){  //选择规格复选框选项时触发
+		$scope.entity.itemList = [{spec:{},price:0,num:99999,status:'0',isDefault:'0' } ];
+		var items = $scope.entity.goodsDesc.specificationItems;  // 其实就是 itemList.spec
+		for (var i = 0; i < items.length; i++) {
+			$scope.entity.itemList = addColumn($scope.entity.itemList,items[i].attributeName,items[i].attributeValue);
+		}
+	};
+
+	addColumn=function(list,columnName,columnValue){  //遍历itemList  columnName 其实就是规格名称 columnValue规格值
+		var newList = []; //深度克隆 所以需要创建新的对象
+		for (var i = 0; i < list.length; i++) {
+			var oldList=list[i];  //被克隆对象的值
+			for (var j = 0; j < columnValue.length; j++) { //遍历规格值得集合
+				var newRow = JSON.parse(JSON.stringify(oldList)); //将被克隆对象转换为json字符串 再转换为对象 赋值给克隆对象（深度克隆）
+				newRow.spec[columnName] = columnValue[j]; // 将被克隆的规格值 赋值给 新的列当列名
+				newList.push(newRow);  // 克隆对象放到空的集合里
+			}
+		}
+		return newList; //返回克隆好的集合对象
+	};
+
 
 	//将当前上传的图片实体存入图片列表
 	$scope.add_image_entity=function(){
