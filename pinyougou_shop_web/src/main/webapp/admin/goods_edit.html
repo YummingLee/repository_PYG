@@ -35,10 +35,10 @@
     
 </head>
 
-<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="goodsController" ng-init="selectItemCat1List()">
+<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="goodsController" ng-init="selectItemCat1List();findOne()">
 entity goods:{{entity.goods}}
 <br>
-itemList:{{entity.itemList}}
+<!--itemList:{{entity.itemList}}-->
             <!-- 正文区域 -->
             <section class="content">
 
@@ -88,9 +88,9 @@ itemList:{{entity.itemList}}
 		                           	  				<select class="form-control select-sm"  ng-model="entity.goods.category3Id"
 															ng-options="item.id as item.name for item in itemCat3List" ></select>
 		                              			</td>
-		                              			<td>
+		                              			<td >
 		                           	  				模板ID:
-													<input align="center" readonly placeholder="{{entity.goods.typeTemplateId}}">
+													<input align="center" readonly placeholder="{{entity.goods.typeTemplateId}}" >
 		                              			</td>
 		                           	  		</tr>
 		                           	  	</table>
@@ -191,9 +191,10 @@ itemList:{{entity.itemList}}
                             <!--规格-->
                             <div class="tab-pane" id="spec">
                             	<div class="row data-type">
+
 	                            	<div class="col-md-2 title">是否启用规格</div>
 			                        <div class="col-md-10 data">
-			                        	<input type="checkbox" ng-click="entity.goodsDesc.specificationItems=[]"  ng-model="entity.goods.isEnableSpec" ng-true-value="1" ng-false-value="0"  >
+			                        	<input type="checkbox" ng-click="entity.goodsDesc.specificationItems=[];entity.itemList=[]"  ng-model="entity.goods.isEnableSpec" ng-true-value="1" ng-false-value="0"  >
 			                        </div>
                             	</div>
 
@@ -206,7 +207,9 @@ itemList:{{entity.itemList}}
 					                        <div class="col-md-10 data">
 
 					                            <span ng-repeat="option in pojo.options">
-					                            	<input  type="checkbox" ng-click="updateSpecAttribute($event,pojo.text,option.optionName);createItemList()" >{{option.optionName}}
+					                            	<input  type="checkbox"
+															ng-click="updateSpecAttribute($event,pojo.text,option.optionName);createItemList()"
+															ng-checked="checkAttributeValue(pojo.text,option.optionName)">{{option.optionName}}
 					                            </span>
 
 					                        </div>
@@ -269,8 +272,8 @@ itemList:{{entity.itemList}}
                  	
                    </div>
                   <div class="btn-toolbar list-toolbar">
-				      <button class="btn btn-primary" ng-click="add()"><i class="fa fa-save"></i>保存</button>
-				      <button class="btn btn-default" >返回列表</button>
+				      <button class="btn btn-primary" ng-click="save()"><i class="fa fa-save"></i>保存</button>
+				      <a href="goods.html"  class="btn btn-default" >返回列表</a>
 				  </div>
 			
             </section>
@@ -313,7 +316,7 @@ itemList:{{entity.itemList}}
 			
 		</div>
 		<div class="modal-footer">						
-			<button class="btn btn-success"  data-dismiss="modal" aria-hidden="true" ng-click="add_image_entity()">保存</button>
+			<button class="btn btn-success"  data-dismiss="modal" aria-hidden="true" ng-click="add_image_entity()">确定</button>
 			<button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
 		</div>
 	  </div>

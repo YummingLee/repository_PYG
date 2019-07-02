@@ -29,17 +29,30 @@ app.controller('baseController' ,function($scope){
             $scope.selectIds.splice(idx, 1);//删除 
 		}
 	}
-
+	
+	
 	$scope.jsonToString=function(jsonString,key){
-		var json=JSON.parse(jsonString);//将 json 字符串转换为 json 对象
+		
+		var json= JSON.parse(jsonString);
 		var value="";
+		
 		for(var i=0;i<json.length;i++){
 			if(i>0){
-				value+=","
-			}
-			value+=json[i][key];
+				value+=",";
+			}			
+			value +=json[i][key];			
 		}
+				
 		return value;
+	}
+
+	$scope.searchObjectByKey=function (list,key,keyValue) {
+		for (var i = 0; i < list.length; i++) {
+			if(list[i][key] == keyValue ){
+				return list[i];
+			}
+		}
+		return null;
 	}
 	
 });	

@@ -1,10 +1,22 @@
  //控制层 
-app.controller('goodsController' ,function($scope,$controller   ,goodsService,uploadService,itemCatService,typeTemplateService){
+app.controller('goodsController' ,function($scope,$controller,$location,goodsService,uploadService,itemCatService,typeTemplateService){
 	
 	$controller('baseController',{$scope:$scope});//继承
 
 
+	$scope.itemCatList=[];
 
+	$scope.status=['未审核','已审核','审核未通过','关闭'];//商品状态
+	$scope.findItemCatList=function(){
+		itemCatService.findAll().success(
+			function (response) {
+				for (var i = 0; i < response.length; i++) {
+					$scope.itemCatList[response[i].id]=response[i].name;
+				}
+			}
+		)
+
+	}
 	$scope.selectItemCat1List=function(){
 		itemCatService.findByParentId(0).success(
 			function (response) {
@@ -24,6 +36,7 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
 			}
 		)
 	});
+
 
 	$scope.$watch("entity.goods.category2Id",function (newValue, oldValue) {
 		itemCatService.findByParentId(newValue).success(
@@ -49,7 +62,9 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
 				$scope.typeTemplate=response;
 				$scope.typeTemplate.brandIds=JSON.parse($scope.typeTemplate.brandIds);
 				// alert(JSON.parse($scope.typeTemplate.customAttributeItems));
-				$scope.entity.goodsDesc.customAttributeItems=JSON.parse( $scope.typeTemplate.customAttributeItems);
+				if($location.search()['id']==null) {
+					$scope.entity.goodsDesc.customAttributeItems = JSON.parse($scope.typeTemplate.customAttributeItems);
+				}
 			}
 		 )
 
@@ -68,7 +83,7 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
 		goodsService.findAll().success(
 			function(response){
 				$scope.list=response;
-			}			
+			}
 		);
 	}    
 	
@@ -83,18 +98,50 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
 	}
 	
 	//查询实体 
-	$scope.findOne=function(id){				
+	$scope.findOne=function(){
+
+		var id = $location.search()['id'];
+		if(id == null){
+			return ;
+		}
 		goodsService.findOne(id).success(
 			function(response){
-				$scope.entity= response;					
+				$scope.entity= response;
+				editor.html($scope.entity.goodsDesc.introduction);
+				$scope.entity.goodsDesc.itemImages= JSON.parse($scope.entity.goodsDesc.itemImages);
+				$scope.entity.goodsDesc.customAttributeItems= JSON.parse($scope.entity.goodsDesc.customAttributeItems);
+				$scope.entity.goodsDesc.specificationItems=JSON.parse($scope.entity.goodsDesc.specificationItems);
+
+
+				for (var i = 0; i < $scope.entity.itemList.length; i++) {
+					$scope.entity.itemList[i].spec = JSON.parse($scope.entity.itemList[i].spec);
+				}
+
 			}
 		);				
+	};
+
+	$scope.checkAttributeValue=function(specName,optionName){
+		var items= $scope.entity.goodsDesc.specificationItems;
+		var object =$scope.searchObjectByKey( items,'attributeName', specName);
+
+		if(object!=null){
+			if(object.attributeValue.indexOf(optionName)>=0){//如果能够查询到规格选项
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			return false;
+		}
 	}
-	
+
+
 	//保存 
-	$scope.save=function(){				
-		var serviceObject;//服务层对象  				
-		if($scope.entity.id!=null){//如果有ID
+	$scope.save=function(){
+		$scope.entity.goodsDesc.introduction=editor.html();
+		var serviceObject;//服务层对象
+		if($scope.entity.goods.id!=null){//如果有ID
 			serviceObject=goodsService.update( $scope.entity ); //修改  
 		}else{
 			serviceObject=goodsService.add( $scope.entity  );//增加 
@@ -103,7 +150,11 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
 			function(response){
 				if(response.success){
 					//重新查询 
-		        	$scope.reloadList();//重新加载
+		        	alert("保存成功");
+					// $scope.entity={};
+					// // editor.html("");
+					// location.reload();
+					location.href="goods.html";
 				}else{
 					alert(response.message);
 				}
@@ -214,6 +265,14 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
 		return newList; //返回克隆好的集合对象
 	};
 
+	$scope.turnPage=function(id,isMarketable){
+		if(isMarketable=== '1'){
+			alert("请先下架商品")
+		}else {
+			location.href="goods_edit.html#?id="+id;
+		}
+	};
+
 
 	//将当前上传的图片实体存入图片列表
 	$scope.add_image_entity=function(){
@@ -224,5 +283,34 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService,up
 	$scope.remove_image_entity=function(index){
 		$scope.entity.goodsDesc.itemImages.splice(index,1);
 	}
-    
+
+	$scope.goods2up=function () {
+		if(confirm("确定要上/下架所选商品？")){
+			goodsService.isAuditStatus($scope.selectIds).success(
+				function (response) {
+					if(response.success){
+						// 审核过商品
+						goodsService.isMarketable($scope.selectIds).success(
+							function (data) {
+								if (data.success){
+									//修改成功
+									alert("商品上/下架成功");
+									$scope.reloadList();//刷新列表
+									$scope.selectIds=[];
+								}else {
+									//修改失败
+									alert(data.message)
+								}
+							}
+						)
+					}else {
+						//审核没过商品
+						alert(response.message);
+					}
+				}
+			)
+
+		}
+	}
+
 });	

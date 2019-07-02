@@ -16,6 +16,7 @@ import com.pinyougou.pojo.TbGoodsExample.Criteria;
 import com.pinyougou.sellergoods.service.GoodsService;
 
 import entity.PageResult;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 /**
@@ -24,6 +25,7 @@ import org.springframework.util.StringUtils;
  *
  */
 @Service
+@Transactional
 public class GoodsServiceImpl implements GoodsService {
 
 	@Autowired
@@ -99,7 +101,12 @@ public class GoodsServiceImpl implements GoodsService {
 		goods.getGoodsDesc().setGoodsId(goods.getGoods().getId());
 		goodsDescMapper.insert(goods.getGoodsDesc());
 
+		saveItemList(goods);
 
+
+	}
+
+	private void saveItemList(Goods goods){
 		if("1".equals(goods.getGoods().getIsEnableSpec())){
 			for (TbItem item : goods.getItemList()){
 				String title = goods.getGoods().getGoodsName();
@@ -107,7 +114,6 @@ public class GoodsServiceImpl implements GoodsService {
 				for (String key : map.keySet()) {
 					title +=  " "+map.get(key);
 				}
-
 //			 String title;
 				item.setTitle(title);
 //			 Long goodsId;
@@ -157,16 +163,24 @@ public class GoodsServiceImpl implements GoodsService {
 			itemMapper.insert(item);
 		}
 
-
 	}
-
-	
 	/**
 	 * 修改
 	 */
 	@Override
-	public void update(TbGoods goods){
-		goodsMapper.updateByPrimaryKey(goods);
+	public void update(Goods goods){
+
+		goods.getGoods().setAuditStatus("0"); //设置申请状态
+		goodsMapper.updateByPrimaryKey(goods.getGoods());
+		goodsDescMapper.updateByPrimaryKey(goods.getGoodsDesc());
+
+		//删除原来的值
+		TbItemExample example = new TbItemExample();
+		TbItemExample.Criteria criteria = example.createCriteria();
+		criteria.andGoodsIdEqualTo(goods.getGoods().getId());
+		itemMapper.deleteByExample(example);
+
+		saveItemList(goods);
 	}	
 	
 	/**
@@ -175,8 +189,20 @@ public class GoodsServiceImpl implements GoodsService {
 	 * @return
 	 */
 	@Override
-	public TbGoods findOne(Long id){
-		return goodsMapper.selectByPrimaryKey(id);
+	public Goods findOne(Long id){
+		Goods goods = new Goods();
+		TbGoods tbGoods = goodsMapper.selectByPrimaryKey(id);
+		goods.setGoods(tbGoods);
+		TbGoodsDesc tbGoodsDesc = goodsDescMapper.selectByPrimaryKey(id);
+		goods.setGoodsDesc(tbGoodsDesc);
+
+		TbItemExample example = new TbItemExample();
+		TbItemExample.Criteria criteria = example.createCriteria();
+		criteria.andGoodsIdEqualTo(id);
+		List<TbItem> tbItems = itemMapper.selectByExample(example);
+		goods.setItemList(tbItems);
+		return goods;
+
 	}
 
 	/**
@@ -185,7 +211,9 @@ public class GoodsServiceImpl implements GoodsService {
 	@Override
 	public void delete(Long[] ids) {
 		for(Long id:ids){
-			goodsMapper.deleteByPrimaryKey(id);
+			TbGoods tbGoods = goodsMapper.selectByPrimaryKey(id);
+			tbGoods.setIsDelete("1");
+			goodsMapper.updateByPrimaryKey(tbGoods);
 		}		
 	}
 	
@@ -196,10 +224,11 @@ public class GoodsServiceImpl implements GoodsService {
 		
 		TbGoodsExample example=new TbGoodsExample();
 		Criteria criteria = example.createCriteria();
+		criteria.andIsDeleteIsNull();
 		
 		if(goods!=null){			
 						if(goods.getSellerId()!=null && goods.getSellerId().length()>0){
-				criteria.andSellerIdLike("%"+goods.getSellerId()+"%");
+				criteria.andSellerIdLike(goods.getSellerId());
 			}
 			if(goods.getGoodsName()!=null && goods.getGoodsName().length()>0){
 				criteria.andGoodsNameLike("%"+goods.getGoodsName()+"%");
@@ -228,5 +257,46 @@ public class GoodsServiceImpl implements GoodsService {
 		Page<TbGoods> page= (Page<TbGoods>)goodsMapper.selectByExample(example);		
 		return new PageResult(page.getTotal(), page.getResult());
 	}
-	
+
+	@Override
+	public void updateStatus(Long[] ids, String status) {
+		for (Long id : ids) {
+			TbGoods tbGoods = goodsMapper.selectByPrimaryKey(id);
+			tbGoods.setAuditStatus(status);
+			goodsMapper.updateByPrimaryKey(tbGoods);
+		}
+	}
+
+	@Override
+	public Boolean isAuditStatus(Long[] ids) {
+		for (Long id : ids) {
+			TbGoods tbGoods = goodsMapper.selectByPrimaryKey(id);
+			String auditStatus =  tbGoods.getAuditStatus();
+			System.out.println(auditStatus);
+			if(!"1".equals(auditStatus)){ //有没上架的商品
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public void isMarketable(Long[] ids) {
+		for (Long id : ids) {
+			TbGoods tbGoods = goodsMapper.selectByPrimaryKey(id);
+			String isMarketable = tbGoods.getIsMarketable();
+			if(isMarketable!=null){
+				if("1".equals(isMarketable)){
+					tbGoods.setIsMarketable("0");
+				}else if ("0".equals(isMarketable)){
+					tbGoods.setIsMarketable("1");
+				}
+				goodsMapper.updateByPrimaryKey(tbGoods);
+			}else {
+				tbGoods.setIsMarketable("1");
+				goodsMapper.updateByPrimaryKey(tbGoods);
+			}
+		}
+	}
+
 }

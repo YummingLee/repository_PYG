@@ -148,7 +148,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
-  <select id="selectTypeOption" resultType="com.pinyougou.pojo.TbTypeTemplate">
+  <select id="selectTypeOption" parameterType="java.lang.Long" resultType="com.pinyougou.pojo.TbTypeTemplate">
       SELECT id, NAME  FROM tb_type_template WHERE id=#{id}
   </select>
   <update id="updateByExampleSelective" parameterType="map" >

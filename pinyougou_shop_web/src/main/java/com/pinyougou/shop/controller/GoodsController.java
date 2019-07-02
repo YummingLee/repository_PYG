@@ -24,6 +24,33 @@ public class GoodsController {
 
 	@Reference
 	private GoodsService goodsService;
+
+	@RequestMapping("/isMarketable")
+	public Result isMarketable(Long[] ids){
+		try {
+			goodsService.isMarketable(ids);
+			return new Result(true,"商品上/下架成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result(false,"商品上/下架失败");
+		}
+	}
+
+
+	@RequestMapping("/isAuditStatus")
+	public Result isAuditStatus(Long[] ids){
+		try {
+			Boolean isAuditStatus = goodsService.isAuditStatus(ids);
+			if (isAuditStatus) {
+				return new Result(true, "商品已审核");
+			}else {
+				return new Result(false,"包含未审核商品");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new Result(false,"包含未审核商品");
+		}
+	}
 	
 	/**
 	 * 返回全部列表
@@ -69,7 +96,13 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/update")
-	public Result update(@RequestBody TbGoods goods){
+	public Result update(@RequestBody Goods goods){
+
+		Goods theOne = goodsService.findOne(goods.getGoods().getId());
+		String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
+		if(!theOne.getGoods().getSellerId().equals(sellerId) || !goods.getGoods().getSellerId().equals(sellerId)){
+			return new Result(false,"非法操作");
+		}
 		try {
 			goodsService.update(goods);
 			return new Result(true, "修改成功");
@@ -85,7 +118,7 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/findOne")
-	public TbGoods findOne(Long id){
+	public Goods findOne(Long id){
 		return goodsService.findOne(id);		
 	}
 	
@@ -107,13 +140,17 @@ public class GoodsController {
 	
 		/**
 	 * 查询+分页
-	 * @param brand
+	 * @param goods
 	 * @param page
 	 * @param rows
 	 * @return
 	 */
 	@RequestMapping("/search")
 	public PageResult search(@RequestBody TbGoods goods, int page, int rows  ){
+
+		String id = SecurityContextHolder.getContext().getAuthentication().getName();
+		goods.setSellerId(id);
+
 		return goodsService.findPage(goods, page, rows);		
 	}
 	

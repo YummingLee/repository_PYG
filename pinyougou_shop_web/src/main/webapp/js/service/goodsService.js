@@ -28,5 +28,11 @@ app.service('goodsService',function($http){
 	//搜索
 	this.search=function(page,rows,searchEntity){
 		return $http.post('../goods/search.do?page='+page+"&rows="+rows, searchEntity);
-	}    	
+	}
+	this.isAuditStatus=function (ids) {
+		return $http.get('../goods/isAuditStatus.do?ids='+ids);
+	}
+	this.isMarketable=function (ids) {
+		return $http.get('../goods/isMarketable.do?ids='+ids);
+	}
 });

@@ -47,7 +47,8 @@ app.controller('typeTemplateController' ,function($scope,$controller ,typeTempla
 			}			
 		);
 	}
-	
+
+
 	//查询实体 
 	$scope.findOne=function(id){				
 		typeTemplateService.findOne(id).success(
