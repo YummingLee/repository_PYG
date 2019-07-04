@@ -64,5 +64,6 @@ public interface ContentService {
 	 * @return
 	 */
 	public List<TbContent> findByCategoryId(Long categoryId);
+
 	
 }
