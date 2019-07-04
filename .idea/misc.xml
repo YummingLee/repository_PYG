@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/pinyougou_content_service" />
     <file type="web" url="file://$PROJECT_DIR$/pinyougou_manager_web" />
     <file type="web" url="file://$PROJECT_DIR$/pinyougou_sellergoods_service" />
   </component>

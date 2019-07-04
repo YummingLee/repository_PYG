@@ -8,21 +8,11 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>pinyougou_content_service</artifactId>
     <packaging>war</packaging>
 
-    <artifactId>pinyougou_manager_web</artifactId>
-
     <dependencies>
-
-        <!--spring-security-->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-        </dependency>
 
         <!-- Spring -->
         <dependency>
@@ -94,11 +84,6 @@
 
         <dependency>
             <groupId>com.pinyougou</groupId>
-            <artifactId>pinyougou_sellergoods_intertface</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.pinyougou</groupId>
             <artifactId>pinyougou_dao</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
@@ -111,18 +96,20 @@
             <groupId>com.pinyougou</groupId>
             <artifactId>pinyougou_common</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
-            <!-- 配置 Tomcat 插件 -->
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
                 <configuration>
+                    <!-- 指定端口 -->
+                    <port>9003</port>
+                    <!-- 请求路径 -->
                     <path>/</path>
-                    <port>9101</port>
                 </configuration>
             </plugin>
         </plugins>
