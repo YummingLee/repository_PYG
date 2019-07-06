@@ -13,9 +13,13 @@
         <module name="pinyougou_manager_web" />
         <module name="pinyougou_pojo" />
         <module name="pinyougou_portal_web" />
+        <module name="pinyougou_search_interface" />
+        <module name="pinyougou_search_service" />
+        <module name="pinyougou_search_web" />
         <module name="pinyougou_sellergoods_intertface" />
         <module name="pinyougou_sellergoods_service" />
         <module name="pinyougou_shop_web" />
+        <module name="pinyougou_solr_util" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

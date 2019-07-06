@@ -26,7 +26,7 @@
 
 
 	<!-- 引用dubbo 服务 -->
-	<dubbo:application name="pinyougou-portal-web" />
+	<dubbo:application name="pinyougou_portal_web" />
 	<dubbo:registry address="zookeeper://192.168.25.128:2181"/>
 	<dubbo:annotation package="com.pinyougou.portal.controller" />  	
 
