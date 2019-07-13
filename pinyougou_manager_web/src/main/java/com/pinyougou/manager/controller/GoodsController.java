@@ -1,7 +1,13 @@
 package com.pinyougou.manager.controller;
+import java.util.Arrays;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
+import com.pinyougou.pojo.TbItem;
 import com.pinyougou.pojogroup.Goods;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +17,13 @@ import com.pinyougou.sellergoods.service.GoodsService;
 
 import entity.PageResult;
 import entity.Result;
+
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+
+
 /**
  * controller
  * @author Administrator
@@ -83,16 +96,36 @@ public class GoodsController {
 	public Goods findOne(Long id){
 		return goodsService.findOne(id);		
 	}
-	
+
+
+	@Autowired
+	private Destination queueSolrDeleteDestination;
+
+	@Autowired
+	private Destination topicPageDeleteDestination;
+
 	/**
 	 * 批量删除
 	 * @param ids
 	 * @return
 	 */
 	@RequestMapping("/delete")
-	public Result delete(Long [] ids){
+	public Result delete(final Long [] ids){
 		try {
 			goodsService.delete(ids);
+//			itemSearchService.deleteByGoodsIds(Arrays.asList(ids));
+			jmsTemplate.send(queueSolrDeleteDestination, new MessageCreator() {
+				@Override
+				public Message createMessage(Session session) throws JMSException {
+					return session.createObjectMessage(ids);
+				}
+			});
+			jmsTemplate.send(topicPageDeleteDestination, new MessageCreator() {
+				@Override
+				public Message createMessage(Session session) throws JMSException {
+					return session.createObjectMessage(ids);
+				}
+			});
 			return new Result(true, "删除成功"); 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -112,10 +145,48 @@ public class GoodsController {
 		return goodsService.findPage(goods, page, rows);		
 	}
 
+//	@Reference
+//	private ItemSearchService itemSearchService;
+
+	@Autowired
+	private Destination queueTextDestination;
+
+	@Autowired
+	private Destination topicPageDestination;
+
+	@Autowired
+	private JmsTemplate jmsTemplate;
+
 	@RequestMapping("/updateStatus")
 	public Result updateStatus(Long[] ids , String status){
 		try {
 			goodsService.updateStatus(ids,status);
+			if(status.equals("1")){
+				List<TbItem> tbItems = goodsService.renewalItemList(ids, status);
+				if(tbItems.size()>0){
+//					itemSearchService.importList(tbItems);
+					final String jsonString = JSON.toJSONString(tbItems);
+					jmsTemplate.send(queueTextDestination, new MessageCreator() {
+						@Override
+						public Message createMessage(Session session) throws JMSException {
+							return session.createTextMessage(jsonString);
+						}
+					});
+
+					for (final Long goodsId : ids) {
+						jmsTemplate.send(topicPageDestination, new MessageCreator() {
+							@Override
+							public Message createMessage(Session session) throws JMSException {
+								return session.createTextMessage(goodsId+"");
+							}
+						});
+					}
+
+
+				}else {
+					System.out.println("啥玩意都没有啊");
+				}
+			}
 			return new Result(true,"成功");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -123,4 +194,15 @@ public class GoodsController {
 		}
 
 	}
+
+//	@Reference
+//	private ItemPageService itemPageService;
+
+//	@RequestMapping("/genHtml")
+//	public void genHtml(Long goodsId){
+////		itemPageService.genItemHtml(goodsId);
+//	}
+
+
+
 }

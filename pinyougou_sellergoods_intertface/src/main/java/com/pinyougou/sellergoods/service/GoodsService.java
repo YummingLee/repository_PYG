@@ -2,6 +2,7 @@ package com.pinyougou.sellergoods.service;
 import java.util.List;
 import com.pinyougou.pojo.TbGoods;
 
+import com.pinyougou.pojo.TbItem;
 import com.pinyougou.pojogroup.Goods;
 import entity.PageResult;
 /**
@@ -64,4 +65,6 @@ public interface GoodsService {
     Boolean isAuditStatus(Long[] ids);
 
     void isMarketable(Long[] ids);
+
+    public List<TbItem> renewalItemList(Long[] goodsIds,String status);
 }
