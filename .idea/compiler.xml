@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="itcast_sms" />
         <module name="pinyougou_common" />
         <module name="pinyougou_content_interface" />
         <module name="pinyougou_content_service" />
@@ -23,6 +24,9 @@
         <module name="pinyougou_sellergoods_service" />
         <module name="pinyougou_shop_web" />
         <module name="pinyougou_solr_util" />
+        <module name="pinyougou_user_interface" />
+        <module name="pinyougou_user_service" />
+        <module name="pinyougou_user_web" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
