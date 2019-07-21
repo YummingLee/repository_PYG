@@ -2,15 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/pinyougou_content_service/pinyougou_content_service.iml" filepath="$PROJECT_DIR$/pinyougou_content_service/pinyougou_content_service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/pinyougou_manager_web/pinyougou_manager_web.iml" filepath="$PROJECT_DIR$/pinyougou_manager_web/pinyougou_manager_web.iml" />
-      <module fileurl="file://$PROJECT_DIR$/pinyougou_page_service/pinyougou_page_service.iml" filepath="$PROJECT_DIR$/pinyougou_page_service/pinyougou_page_service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/pinyougou_page_web/pinyougou_page_web.iml" filepath="$PROJECT_DIR$/pinyougou_page_web/pinyougou_page_web.iml" />
-      <module fileurl="file://$PROJECT_DIR$/pinyougou_portal_web/pinyougou_portal_web.iml" filepath="$PROJECT_DIR$/pinyougou_portal_web/pinyougou_portal_web.iml" />
-      <module fileurl="file://$PROJECT_DIR$/pinyougou_search_service/pinyougou_search_service.iml" filepath="$PROJECT_DIR$/pinyougou_search_service/pinyougou_search_service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/pinyougou_search_web/pinyougou_search_web.iml" filepath="$PROJECT_DIR$/pinyougou_search_web/pinyougou_search_web.iml" />
       <module fileurl="file://$PROJECT_DIR$/pinyougou_shop_web/pinyougou_shop_web.iml" filepath="$PROJECT_DIR$/pinyougou_shop_web/pinyougou_shop_web.iml" />
-      <module fileurl="file://$PROJECT_DIR$/pinyougou_solr_util/pinyougou_solr_util.iml" filepath="$PROJECT_DIR$/pinyougou_solr_util/pinyougou_solr_util.iml" />
     </modules>
   </component>
 </project>
